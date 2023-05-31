@@ -56,6 +56,8 @@ app.use(jwt());
 // api routes
 app.use(process.env.API_PREFIX + '/users', require('./users/users.controller'));
 app.use(process.env.API_PREFIX + '/scan', require('./scan/scan.controller'));
+app.use(process.env.API_PREFIX + '/task', require('./tasks/task.controller'));
+app.use(process.env.API_PREFIX + '/daily', require('./daily/daily.controller'));
 app.use(process.env.API_PREFIX + '/company', require('./companies/company.controller'));
 
 // global error handler

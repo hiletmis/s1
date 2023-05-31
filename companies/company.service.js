@@ -132,17 +132,7 @@ async function addLocation(locationParam, user) {
 }
 
 async function removeLocation(locationParam, user) {
-    await security.checkAuthorization(user, locationParam.company);
-
-    if (locationParam.company == null) {
-        throw ("Company is required")
-    }
-
-    if (locationParam.location == null) {
-        throw ("Location is required")
-    }
-
-    const company = await security.checkCompany(locationParam.company);
+    const company = await security.checkCompany(user.sub);
     const location = company.locations.find(x => x._id == locationParam.location);
 
     if (location == null) {

@@ -12,6 +12,7 @@ const schema = new Schema({
     company: { type: String, required: true, validate: { validator: function(v) { return v != null }, message: 'Company is required' } },
     office: { type: String, required: false },
     userRole: { type: Number, required: true, default: 0 },
+    title: { type: String, required: false },
     device: { type: String, required: true, default: "mobile" },
     createdDate: { type: Date, default: Date.now }
 });

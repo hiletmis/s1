@@ -8,6 +8,7 @@ require('dotenv').config();
 
 const User = db.User;
 const Company = db.Company;
+const Scans = db.Scan;
 
 module.exports = {
     create,
@@ -15,7 +16,9 @@ module.exports = {
     getCompany,
     getCompanyById,
     addLocation,
-    removeLocation
+    removeLocation,
+    getScans,
+    getCompanyUsers
 };
 
 async function authenticate({ username, password }) {
@@ -150,4 +153,14 @@ async function removeLocation(locationParam, user) {
 
     await company.save();
     return company;
+}
+
+async function getCompanyUsers(user) {
+    const company = await security.checkCompany(user.sub);
+    return await User.find({ company: company._id }, { hash: 0, username: 0, __v: 0, company: 0, userRole: 0, device: 0, createdDate: 0, id: 0 });
+}
+
+async function getScans(user) {
+    const company = await security.checkCompany(user.sub);
+    return await Scans.find({ company: company._id }, { __v: 0, company: 0, lat: 0, long: 0, _id: 0, device: 0, createdDate: 0, id: 0 });
 }

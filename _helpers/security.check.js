@@ -183,6 +183,13 @@ async function validateUserUpdate(isUser, userParam) {
         }
     }
 
+    // change title
+    if (userParam.title != null) {
+        if (validateInput(userParam.title, "name") == true) {
+            isUser.title = userParam.title
+        }
+    }
+
     // change tcno
     if (userParam.tcno != null) {
         if (validateInput(userParam.tcno, "tcno") == true) {

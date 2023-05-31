@@ -32,7 +32,7 @@ async function scan(scanParam, payload) {
 
     const distance = getDistanceFromLatLonInKm(scanParam.lat, scanParam.long, location.lat, location.long);
 
-    if (distance > 0.5) {
+    if (distance > 0.1) {
         throw ("You are not at the company location")
     }
 

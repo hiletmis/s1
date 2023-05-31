@@ -9,6 +9,8 @@ router.post('/removelocation', removeLocation);
 router.post('/authenticate', authenticate);
 router.get('/get', getCompany);
 router.get('/getbyid/:id', getCompanyById);
+router.get('/getscans', getScans);
+router.get('/getusers', getCompanyUsers);
 
 module.exports = router;
 
@@ -64,6 +66,26 @@ function getCompanyById(req, res, next) {
 
 function removeLocation(req, res, next) {
     userService.removeLocation(req.body, req.user)
+        .then(function(users) {
+            res.json(users)
+        })
+        .catch(function(err) {
+            next(err)
+        })
+}
+
+function getScans(req, res, next) {
+    userService.getScans(req.user)
+        .then(function(users) {
+            res.json(users)
+        })
+        .catch(function(err) {
+            next(err)
+        })
+}
+
+function getCompanyUsers(req, res, next) {
+    userService.getCompanyUsers(req.user)
         .then(function(users) {
             res.json(users)
         })

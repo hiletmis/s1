@@ -18,7 +18,8 @@ module.exports = {
     validateUserUpdate,
     validateUserCreate,
     checkDevice,
-    checkLocation
+    checkLocation,
+    checkDistanceFromLatLonInKm
 };
 /**
  * 
@@ -168,7 +169,7 @@ async function checkUserRoleUpdate(user, company) {
  * 
  **/
 
-function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+function checkDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
     //radius of the earth
     var R = 6371;
     //convert to radians
@@ -179,7 +180,12 @@ function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     //distance in km
     var d = R * c;
-    return d;
+
+    if (d > 0.14) {
+        throw ("You are not at the company location")
+    }
+
+    return true
 }
 
 /**

@@ -158,12 +158,7 @@ async function calculateWorkingHours(body, user) {
 
     const workingHours = await Scans.aggregate([
         { $match: query },
-        {
-            $group: {
-                _id: "$user",
-                total: { $sum: { $round: [{ $divide: [{ $subtract: ["$outtime", "$intime"] }, 3600000] }, 3] } }
-            }
-        },
+        { $group: { _id: "$user", total: { $sum: { $round: [{ $divide: [{ $subtract: ["$outtime", "$intime"] }, 3600000] }, 3] } } } },
         { $sort: { total: -1 } }
     ]);
     return workingHours;

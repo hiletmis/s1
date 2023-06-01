@@ -5,7 +5,7 @@ const userService = require('./scan.service.js');
 // routes
 router.post('/scan', scan);
 router.get('/scanner', getScanner);
-
+router.post('/agg', getAggSearch);
 module.exports = router;
 
 function scan(req, res, next) {
@@ -20,6 +20,16 @@ function scan(req, res, next) {
 
 function getScanner(req, res, next) {
     userService.getScanner(req.user)
+        .then(function(users) {
+            res.json(users)
+        })
+        .catch(function(err) {
+            next(err)
+        })
+}
+
+function getAggSearch(req, res, next) {
+    userService.getAggSearch(req.body, req.user)
         .then(function(users) {
             res.json(users)
         })

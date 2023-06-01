@@ -17,7 +17,8 @@ module.exports = {
     validateInput,
     validateUserUpdate,
     validateUserCreate,
-    checkDevice
+    checkDevice,
+    checkLocation
 };
 /**
  * 
@@ -153,6 +154,75 @@ async function checkUserRoleUpdate(user, company) {
             throw ("Unauthorized")
         }
     }
+}
+
+/**
+ * 
+ * @param {String} lat1
+ * @param {String} lon1
+ * @param {String} lat2
+ * @param {String} lon2
+ * @returns
+ * @throws
+ * @description Calculates the distance between two points
+ * 
+ **/
+
+function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+    //radius of the earth
+    var R = 6371;
+    //convert to radians
+    var dLat = deg2rad(lat2 - lat1);
+    var dLon = deg2rad(lon2 - lon1);
+    //calculate distance
+    var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2)
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    //distance in km
+    var d = R * c;
+    return d;
+}
+
+/**
+ * 
+ * @param {String} deg
+ * @returns
+ * @throws
+ * @description Converts degrees to radians
+ *  
+ **/
+
+function deg2rad(deg) {
+    return deg * (Math.PI / 180)
+}
+
+/**
+ * 
+ * @param {String} location
+ * @param {String} company
+ * @returns
+ * @throws
+ * @description Checks if the location exists
+ * 
+ **/
+
+async function checkLocation(company, location) {
+    const locations = await Company.findById(company, { "__v": 0, "hash": 0, "username": 0, "createdDate": 0, "_id": 0 });
+
+    if (locations == null) {
+        throw ("The company does not have any locations")
+    }
+
+    if (location == null) {
+        return locations
+    }
+
+    const locationExists = locations.locations.find(x => x._id == location)
+
+    if (locationExists == null) {
+        throw ("The location does not exist")
+    }
+
+    return locationExists
 }
 
 async function validateUserUpdate(isUser, userParam) {

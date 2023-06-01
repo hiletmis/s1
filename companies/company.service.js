@@ -3,6 +3,7 @@ const db = require('_helpers/db');
 const security = require('_helpers/security.check');
 const { v4: uuidv4 } = require('uuid')
 const jwt = require('jsonwebtoken');
+const queryCheck = require('_helpers/query.check');
 
 require('dotenv').config();
 
@@ -18,14 +19,15 @@ module.exports = {
     addLocation,
     removeLocation,
     getScans,
-    getCompanyUsers
+    getCompanyUsers,
+    calculateWorkingHours
 };
 
 async function authenticate({ username, password }) {
     const user = await Company.findOne({ username });
     if (user && bcrypt.compareSync(password, user.hash)) {
         const { hash, ...userWithoutHash } = user.toObject();
-        const token = jwt.sign({ sub: user.id }, process.env.JWT_SECRET);
+        const token = jwt.sign({ sub: user.id, role: 1 }, process.env.JWT_SECRET);
         return {
             ...userWithoutHash,
             token
@@ -150,7 +152,26 @@ async function getCompanyUsers(user) {
     return await User.find({ company: company._id }, { hash: 0, username: 0, __v: 0, company: 0, userRole: 0, device: 0, createdDate: 0, id: 0 });
 }
 
-async function getScans(user) {
+async function calculateWorkingHours(body, user) {
     const company = await security.checkCompany(user.sub);
-    return await Scans.find({ company: company._id }, { __v: 0, company: 0, lat: 0, long: 0, _id: 0, device: 0, createdDate: 0, id: 0 });
+    let query = queryCheck.queryBuilder(body, { company: company._id })
+
+    const workingHours = await Scans.aggregate([
+        { $match: query },
+        {
+            $group: {
+                _id: "$user",
+                total: { $sum: { $round: [{ $divide: [{ $subtract: ["$outtime", "$intime"] }, 3600000] }, 3] } }
+            }
+        },
+        { $sort: { total: -1 } }
+    ]);
+    return workingHours;
+}
+
+async function getScans(body, user) {
+    const company = await security.checkCompany(user.sub);
+    let query = queryCheck.queryBuilder(body, { company: company._id })
+    return await Scans.find(query, { __v: 0, company: 0, lat: 0, long: 0, _id: 0, device: 0, createdDate: 0, id: 0 });
+
 }

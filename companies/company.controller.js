@@ -9,8 +9,9 @@ router.post('/removelocation', removeLocation);
 router.post('/authenticate', authenticate);
 router.get('/get', getCompany);
 router.get('/getbyid/:id', getCompanyById);
-router.get('/getscans', getScans);
+router.post('/getscans', getScans);
 router.get('/getusers', getCompanyUsers);
+router.post('/agg', calculateWorkingHours);
 
 module.exports = router;
 
@@ -75,7 +76,7 @@ function removeLocation(req, res, next) {
 }
 
 function getScans(req, res, next) {
-    userService.getScans(req.user)
+    userService.getScans(req.body, req.user)
         .then(function(users) {
             res.json(users)
         })
@@ -86,6 +87,16 @@ function getScans(req, res, next) {
 
 function getCompanyUsers(req, res, next) {
     userService.getCompanyUsers(req.user)
+        .then(function(users) {
+            res.json(users)
+        })
+        .catch(function(err) {
+            next(err)
+        })
+}
+
+function calculateWorkingHours(req, res, next) {
+    userService.calculateWorkingHours(req.body, req.user)
         .then(function(users) {
             res.json(users)
         })

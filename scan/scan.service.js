@@ -1,5 +1,7 @@
 const db = require('_helpers/db');
 const { v4: uuidv4 } = require('uuid')
+const queryCheck = require('_helpers/query.check');
+const security = require('_helpers/security.check');
 
 require('dotenv').config();
 
@@ -9,30 +11,17 @@ const Company = db.Company;
 
 module.exports = {
     scan,
-    getScanner
+    getScanner,
+    getAggSearch
 };
 
 async function scan(scanParam, payload) {
-    const isUser = await User.findById(payload.sub);
-    const isCompany = await Company.findById(payload.company);
-
-    if (isUser == null) {
-        throw ("The user does not exist")
-    }
-
-    if (isCompany == null) {
-        throw ("The company does not exist")
-    }
-
-    const location = isCompany.locations.find(x => x._id === scanParam.location);
-
-    if (location == null) {
-        throw ("The location does not exist")
-    }
+    const isUser = await security.getUser(payload.sub);
+    const location = await security.checkLocation(payload.company, scanParam.location);
 
     const distance = getDistanceFromLatLonInKm(scanParam.lat, scanParam.long, location.lat, location.long);
 
-    if (distance > 0.1) {
+    if (distance > 0.14) {
         throw ("You are not at the company location")
     }
 
@@ -85,11 +74,18 @@ function deg2rad(deg) {
 }
 
 async function getScanner(payload) {
-    const isUser = await User.findById(payload.sub);
+    const isUser = await security.getUser(payload.sub);
+    const locations = await security.checkLocation(payload.company);
 
-    if (isUser == null) {
-        throw ("The user does not exist")
-    }
+    const scans = await Scan.find({ user: payload.sub }, { "__v": 0, "lat": 0, "long": 0, "device": 0 }, { sort: { 'intime': -1 } });
+    return { locations, scans }
+}
 
-    return await Scan.find({ user: payload.sub }, { "__v": 0, "lat": 0, "long": 0, "device": 0 }, { sort: { 'intime': -1 } });
+async function getAggSearch(params, payload) {
+    const isUser = await security.getUser(payload.sub);
+    const locations = await security.checkLocation(payload.company);
+
+    const query = queryCheck.queryBuilder(params, { company: payload.company });
+    const scans = await Scan.find(query, { "__v": 0, "lat": 0, "long": 0, "device": 0 }, { sort: { 'intime': -1 } });
+    return { locations, scans }
 }

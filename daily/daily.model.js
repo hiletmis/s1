@@ -6,6 +6,7 @@ const schema = new Schema({
     task: { type: String, required: [true, 'Task name is required'] },
     assignee: { type: String, required: false },
     company: { type: String, required: [true, 'Company is required'] },
+    location: { type: String, required: [true, "Location is required"] },
     due_date: { type: Date, required: [true, 'Due date is required'] },
     note: { type: String, required: false },
     status: { type: Number, required: true, default: 0 },

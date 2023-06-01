@@ -16,91 +16,37 @@ router.post('/agg', calculateWorkingHours);
 module.exports = router;
 
 function register(req, res, next) {
-    userService.create(req.body, req.user)
-        .then(function(users) {
-            res.json(users)
-        })
-        .catch(function(err) {
-            next(err)
-        })
+    userService.create(req.body, req.user).then(function(users) { res.json(users) }).catch(function(err) { next(err) })
 }
 
 function addLocation(req, res, next) {
-    userService.addLocation(req.body, req.user)
-        .then(function(users) {
-            res.json(users)
-        })
-        .catch(function(err) {
-            next(err)
-        })
+    userService.addLocation(req.body, req.user).then(function(users) { res.json(users) }).catch(function(err) { next(err) })
 }
 
 function authenticate(req, res, next) {
-    userService.authenticate(req.body)
-        .then(function(users) {
-            res.json(users)
-        })
-        .catch(function(err) {
-            next(err)
-        })
+    userService.authenticate(req.body).then(function(users) { res.json(users) }).catch(function(err) { next(err) })
 }
 
 function getCompany(req, res, next) {
-    userService.getCompany(req.user)
-        .then(function(users) {
-            res.json(users)
-        })
-        .catch(function(err) {
-            next(err)
-        })
+    userService.getCompany(req.user).then(function(users) { res.json(users) }).catch(function(err) { next(err) })
 }
 
 function getCompanyById(req, res, next) {
-    userService.getCompanyById(req.params.id, req.user)
-        .then(function(users) {
-            res.json(users)
-        })
-        .catch(function(err) {
-            next(err)
-        })
+    userService.getCompanyById(req.params.id, req.user).then(function(users) { res.json(users) }).catch(function(err) { next(err) })
 }
 
 function removeLocation(req, res, next) {
-    userService.removeLocation(req.body, req.user)
-        .then(function(users) {
-            res.json(users)
-        })
-        .catch(function(err) {
-            next(err)
-        })
+    userService.removeLocation(req.body, req.user).then(function(users) { res.json(users) }).catch(function(err) { next(err) })
 }
 
 function getScans(req, res, next) {
-    userService.getScans(req.body, req.user)
-        .then(function(users) {
-            res.json(users)
-        })
-        .catch(function(err) {
-            next(err)
-        })
+    userService.getScans(req.body, req.user).then(function(users) { res.json(users) }).catch(function(err) { next(err) })
 }
 
 function getCompanyUsers(req, res, next) {
-    userService.getCompanyUsers(req.user)
-        .then(function(users) {
-            res.json(users)
-        })
-        .catch(function(err) {
-            next(err)
-        })
+    userService.getCompanyUsers(req.user).then(function(users) { res.json(users) }).catch(function(err) { next(err) })
 }
 
 function calculateWorkingHours(req, res, next) {
-    userService.calculateWorkingHours(req.body, req.user)
-        .then(function(users) {
-            res.json(users)
-        })
-        .catch(function(err) {
-            next(err)
-        })
+    userService.calculateWorkingHours(req.body, req.user).then(function(users) { res.json(users) }).catch(function(err) { next(err) })
 }

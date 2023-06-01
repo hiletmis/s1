@@ -9,31 +9,13 @@ router.post('/agg', getAggSearch);
 module.exports = router;
 
 function scan(req, res, next) {
-    userService.scan(req.body, req.user)
-        .then(function(users) {
-            res.json(users)
-        })
-        .catch(function(err) {
-            next(err)
-        })
+    userService.scan(req.body, req.user).then(function(users) { res.json(users) }).catch(function(err) { next(err) })
 }
 
 function getScanner(req, res, next) {
-    userService.getScanner(req.user)
-        .then(function(users) {
-            res.json(users)
-        })
-        .catch(function(err) {
-            next(err)
-        })
+    userService.getScanner(req.user).then(function(users) { res.json(users) }).catch(function(err) { next(err) })
 }
 
 function getAggSearch(req, res, next) {
-    userService.getAggSearch(req.body, req.user)
-        .then(function(users) {
-            res.json(users)
-        })
-        .catch(function(err) {
-            next(err)
-        })
+    userService.getAggSearch(req.body, req.user).then(function(users) { res.json(users) }).catch(function(err) { next(err) })
 }

@@ -11,41 +11,17 @@ router.get('/get', getTasks);
 module.exports = router;
 
 function createTask(req, res, next) {
-    taskService.createTask(req.body, req.user)
-        .then(function(users) {
-            res.json(users)
-        })
-        .catch(function(err) {
-            next(err)
-        })
+    taskService.createTask(req.body, req.user).then(function(users) { res.json(users) }).catch(function(err) { next(err) })
 }
 
 function updateTask(req, res, next) {
-    taskService.updateTask(req.body, req.user)
-        .then(function(users) {
-            res.json(users)
-        })
-        .catch(function(err) {
-            next(err)
-        })
+    taskService.updateTask(req.body, req.user).then(function(users) { res.json(users) }).catch(function(err) { next(err) })
 }
 
 function deleteTask(req, res, next) {
-    taskService.deleteTask(req.body, req.user)
-        .then(function(users) {
-            res.json(users)
-        })
-        .catch(function(err) {
-            next(err)
-        })
+    taskService.deleteTask(req.body, req.user).then(function(users) { res.json(users) }).catch(function(err) { next(err) })
 }
 
 function getTasks(req, res, next) {
-    taskService.getTasks(req.user)
-        .then(function(users) {
-            res.json(users)
-        })
-        .catch(function(err) {
-            next(err)
-        })
+    taskService.getTasks(req.user).then(function(users) { res.json(users) }).catch(function(err) { next(err) })
 }

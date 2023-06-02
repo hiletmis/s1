@@ -42,17 +42,58 @@ async function createTask(taskParam, payload) {
 
 async function getTasks(payload) {
     const company = await security.checkCompany(payload.sub);
-    const tasks = await Task.find({ company: payload.sub }, { "__v": 0, "company": 0 });
-    return tasks
+    return await Task.find({ company: payload.sub }, { "__v": 0, "company": 0 });
 }
 
 async function updateTask(taskParam, payload) {
     const company = await security.checkCompany(payload.sub);
 
+    if (taskParam.task == null) {
+        throw ("Task ID is required")
+    }
+
+    const task = await Task.findById({ _id: taskParam.task, company: payload.sub }, { "__v": 0, "company": 0 });
+
+    if (task == null) {
+        throw ("Task does not exist")
+    }
+
+    if (taskParam.title != null) {
+        task.title = taskParam.title
+    }
+
+    if (taskParam.description != null) {
+        task.description = taskParam.description
+    }
+
+    if (taskParam.location != null) {
+        task.location = taskParam.location;
+    }
+
+    if (taskParam.period != null) {
+        task.period = taskParam.period;
+    }
+
+    if (taskParam.score != null) {
+        task.score = taskParam.score;
+    }
+
+    if (taskParam.duration != null) {
+        task.duration = taskParam.duration;
+    }
+
+    await task.save();
+    return task
+
 }
 
 async function deleteTask(taskParam, payload) {
     const company = await security.checkCompany(payload.sub);
-    await Task.deleteOne(taskParam._id);
+
+    if (taskParam.task == null) {
+        throw ("Task ID is required")
+    }
+
+    await Task.deleteOne({ _id: taskParam.task, company: payload.sub });
     return { message: "Success" }
 }

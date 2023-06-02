@@ -5,9 +5,7 @@ const security = require('_helpers/security.check');
 
 require('dotenv').config();
 
-const User = db.User;
 const Scan = db.Scan;
-const Company = db.Company;
 
 module.exports = {
     scan,

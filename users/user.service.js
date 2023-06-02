@@ -35,7 +35,9 @@ async function update(userParam, payload) {
     isUser = await security.validateUserUpdate(isUser, userParam);
 
     await isUser.save();
-    return { message: "Success" }
+
+    const { hash, ...userWithoutHash } = isUser.toObject();
+    return userWithoutHash
 }
 
 async function create(userParam, company) {

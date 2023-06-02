@@ -6,6 +6,7 @@ const userService = require('./company.service.js');
 router.post('/register', register);
 router.post('/addlocation', addLocation);
 router.post('/removelocation', removeLocation);
+router.post('/update', update);
 router.post('/authenticate', authenticate);
 router.get('/get', getCompany);
 router.get('/getbyid/:id', getCompanyById);
@@ -21,6 +22,10 @@ function register(req, res, next) {
 
 function addLocation(req, res, next) {
     userService.addLocation(req.body, req.user).then(function(users) { res.json(users) }).catch(function(err) { next(err) })
+}
+
+function update(req, res, next) {
+    userService.update(req.body, req.user).then(function(users) { res.json(users) }).catch(function(err) { next(err) })
 }
 
 function authenticate(req, res, next) {

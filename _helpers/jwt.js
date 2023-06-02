@@ -8,7 +8,7 @@ function jwt() {
     return expressJwt({ secret, isRevoked, algorithms: ['HS256'] }).unless({
         path: [
             process.env.API_PREFIX + '/users/authenticate',
-            process.env.API_PREFIX + '/companies/authenticate',
+            process.env.API_PREFIX + '/company/authenticate',
         ]
     });
 }

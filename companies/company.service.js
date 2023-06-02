@@ -20,7 +20,8 @@ module.exports = {
     removeLocation,
     getScans,
     getCompanyUsers,
-    calculateWorkingHours
+    calculateWorkingHours,
+    update
 };
 
 async function authenticate({ username, password }) {
@@ -39,45 +40,7 @@ async function authenticate({ username, password }) {
 
 async function create(userParam, admin) {
     await security.checkAdmin(admin);
-
-    if (userParam.username == null) {
-        throw ("E-mail address is required")
-    }
-
-    if (userParam.password == null) {
-        throw ("Password is required")
-    }
-
-    if (userParam.password.length < 6) {
-        throw ("Password must be at least six characters long")
-    }
-
-    if (userParam.companyname == null) {
-        throw ("Company name is required")
-    }
-
-    if (userParam.address == null) {
-        throw ("Address is required")
-    }
-
-    const username = userParam.username
-    const isUser = await Company.findOne({ username });
-
-    if (isUser != null) {
-        throw ("This e-mail address is already in use")
-    }
-
-    const company = new Company(userParam);
-
-    if (userParam.password) {
-        company.hash = bcrypt.hashSync(userParam.password, 10);
-    }
-
-    company._id = uuidv4()
-
-    // save user
-    await company.save();
-    return company;
+    return await security.validateCompany(userParam);
 }
 
 async function getCompany(user) {
@@ -93,58 +56,21 @@ async function getCompanyById(companyParam, user) {
 
 async function addLocation(locationParam, user) {
     const company = await security.checkCompany(user.sub);
-
-    if (locationParam.name == null) {
-        throw ("Location name is required")
-    }
-
-    if (locationParam.address == null) {
-        throw ("Address is required")
-    }
-
-    if (locationParam.lat == null) {
-        throw ("Latitude is required")
-    }
-
-    //check if lat is number
-    if (isNaN(locationParam.lat)) {
-        throw ("Latitude must be a number")
-    }
-
-    if (locationParam.long == null) {
-        throw ("Longitude is required")
-    }
-
-    if (isNaN(locationParam.long)) {
-        throw ("Latitude must be a number")
-    }
-
-    const location = {
-        _id: uuidv4(),
-        name: locationParam.name,
-        address: locationParam.address,
-        lat: locationParam.lat,
-        long: locationParam.long
-    }
-
+    const location = security.validateLocation(locationParam);
     company.locations.push(location);
 
     await company.save();
-    return company;
+    return company.locations;
 }
 
 async function removeLocation(locationParam, user) {
     const company = await security.checkCompany(user.sub);
-    const location = company.locations.find(x => x._id == locationParam.location);
+    const location = await security.checkLocation(user.sub, locationParam.location);
 
-    if (location == null) {
-        throw ("The location does not exist")
-    }
-
-    company.locations = company.locations.filter(x => x._id != locationParam.location);
-
+    company.locations = company.locations.filter(x => x._id != location._id);
     await company.save();
-    return company;
+
+    return company.locations;
 }
 
 async function getCompanyUsers(user) {
@@ -161,6 +87,7 @@ async function calculateWorkingHours(body, user) {
         { $group: { _id: "$user", total: { $sum: { $round: [{ $divide: [{ $subtract: ["$outtime", "$intime"] }, 3600000] }, 3] } } } },
         { $sort: { total: -1 } }
     ]);
+
     return workingHours;
 }
 
@@ -169,4 +96,9 @@ async function getScans(body, user) {
     let query = queryCheck.queryBuilder(body, { company: company._id })
     return await Scans.find(query, { __v: 0, company: 0, lat: 0, long: 0, _id: 0, device: 0, createdDate: 0, id: 0 });
 
+}
+
+async function update(userParam, user) {
+    const company = await security.checkCompany(user.sub);
+    return await security.validateCompanyUpdate(company, userParam);
 }

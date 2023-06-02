@@ -64,7 +64,14 @@ async function create(userParam, company) {
     }
 
     user.company = company.sub;
-    user.office = isCompany.locations[0]._id;
+
+    if (userParam.office != null) {
+        const isLocation = await security.checkLocation(company.sub, userParam.office);
+        user.office = isLocation._id;
+    } else {
+        user.office = isCompany.locations[0]._id;
+    }
+
     user._id = uuidv4()
 
     await user.save();

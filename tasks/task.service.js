@@ -15,27 +15,8 @@ module.exports = {
 
 async function createTask(taskParam, payload) {
     const company = await security.checkCompany(payload.sub);
-
-    if (taskParam.title == null) {
-        throw ("Title is required")
-    }
-
-    if (taskParam.description == null) {
-        throw ("Description is required")
-    }
-
-    if (taskParam.location == null) {
-        throw ("Location is required")
-    }
-
-    if (taskParam.period == null) {
-        throw ("Period is required")
-    }
-
-    const task = new Task(taskParam);
-    task._id = uuidv4();
+    const task = security.validateTask(taskParam);
     task.company = payload.sub;
-
     await task.save();
     return task
 }
@@ -53,37 +34,10 @@ async function updateTask(taskParam, payload) {
     }
 
     const task = await Task.findById({ _id: taskParam.task, company: payload.sub }, { "__v": 0, "company": 0 });
+    const updatedTask = security.validateTaskUpdate(task, taskParam);
 
-    if (task == null) {
-        throw ("Task does not exist")
-    }
-
-    if (taskParam.title != null) {
-        task.title = taskParam.title
-    }
-
-    if (taskParam.description != null) {
-        task.description = taskParam.description
-    }
-
-    if (taskParam.location != null) {
-        task.location = taskParam.location;
-    }
-
-    if (taskParam.period != null) {
-        task.period = taskParam.period;
-    }
-
-    if (taskParam.score != null) {
-        task.score = taskParam.score;
-    }
-
-    if (taskParam.duration != null) {
-        task.duration = taskParam.duration;
-    }
-
-    await task.save();
-    return task
+    await updatedTask.save();
+    return updatedTask
 
 }
 

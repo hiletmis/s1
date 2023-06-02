@@ -21,6 +21,8 @@ module.exports = {
     validateCompanyUpdate,
     validateLocation,
     validateCompany,
+    validateTask,
+    validateTaskUpdate,
     checkDevice,
     checkLocation,
     checkDistanceFromLatLonInKm
@@ -529,6 +531,106 @@ function validateLocation(locationParam) {
 
 }
 
+function validateTask(taskParam) {
+
+    if (taskParam.title == null) {
+        throw ("Title is required")
+    }
+
+    if (taskParam.description == null) {
+        throw ("Description is required")
+    }
+
+    if (taskParam.location == null) {
+        throw ("Location is required")
+    }
+
+    if (taskParam.period == null) {
+        throw ("Period is required")
+    }
+
+    if (validateInput(taskParam.title, "regular") == false) {
+        throw ("Title is invalid")
+    }
+
+    if (validateInput(taskParam.description, "regular") == false) {
+        throw ("Description is invalid")
+    }
+
+    if (validateInput(taskParam.location, "regular") == false) {
+        throw ("Location is invalid")
+    }
+
+    if (validateInput(taskParam.period, "period") == false) {
+        throw ("Period is invalid")
+    }
+
+    const task = {
+        _id: uuidv4(),
+        title: taskParam.title,
+        description: taskParam.description,
+        location: taskParam.location,
+        period: taskParam.period
+    }
+
+    return task
+}
+
+function validateTaskUpdate(task, taskParam) {
+
+    if (task == null) {
+        throw ("Task does not exist")
+    }
+
+    if (taskParam.title != null) {
+        if (validateInput(taskParam.title, "regular") == true) {
+            task.title = taskParam.title
+        } else {
+            throw ("Title is invalid")
+        }
+    }
+
+    if (taskParam.description != null) {
+        if (validateInput(taskParam.description, "regular") == true) {
+            task.description = taskParam.description
+        } else {
+            throw ("Description is invalid")
+        }
+    }
+
+    if (taskParam.location != null) {
+        if (validateInput(taskParam.location, "regular") == true) {
+            task.location = taskParam.location
+        } else {
+            throw ("Location is invalid")
+        }
+    }
+
+    if (taskParam.period != null) {
+        if (validateInput(taskParam.period, "period") == true) {
+            task.period = taskParam.period
+        } else {
+            throw ("Period is invalid")
+        }
+    }
+
+    if (taskParam.score != null) {
+        if (isNaN(taskParam.score)) {
+            throw ("Score must be a number")
+        }
+        task.score = taskParam.score;
+    }
+
+    if (taskParam.duration != null) {
+        if (isNaN(taskParam.duration)) {
+            throw ("Duration must be a number")
+        }
+        task.duration = taskParam.duration;
+    }
+
+    return task
+}
+
 /**
  *  
  * @param {String} input
@@ -554,6 +656,8 @@ function validateInput(input, mode) {
             return validateTcno(input)
         case "tel":
             return validateTel(input)
+        case "period":
+            return validatePeriod(input)
         default:
             return false
     }
@@ -600,4 +704,11 @@ function validateTel(input) {
     var telRegex = /^(\+90|0)?5\d{9}$/;
     //validate input with regex
     return (telRegex.test(input))
+}
+
+function validatePeriod(input) {
+    //period regex
+    var periodRegex = /^(\*|[0-9]{1,2})(\/[0-9]{1,2})?(\s+(\*|[0-9]{1,2})(\/[0-9]{1,2})?){4}$/;
+    //validate input with regex
+    return (periodRegex.test(input))
 }

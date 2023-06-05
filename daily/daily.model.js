@@ -7,9 +7,10 @@ const schema = new Schema({
     performedby: { type: String, required: false },
     company: { type: String, required: [true, 'Company is required'] },
     location: { type: String, required: [true, "Location is required"] },
-    due_date: { type: Date, required: [true, 'Due date is required'] },
+    due_date: { type: Date, required: false },
     note: { type: String, required: false },
     status: { type: Number, required: true, default: 0 },
+    updatedDate: { type: Date, default: Date.now },
     createdDate: { type: Date, default: Date.now }
 });
 

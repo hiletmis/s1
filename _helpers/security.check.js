@@ -93,11 +93,15 @@ async function checkAuthorization(user, company) {
  * 
  **/
 
-async function checkCompany(companyID) {
+async function checkCompany(companyID, checkOnly = false) {
     const company = await Company.findById(companyID, { hash: 0, __v: 0 });
 
     if (company == null) {
-        throw ("The company does not exist")
+        if (checkOnly) {
+            return null;
+        } else {
+            throw ("The company does not exist")
+        }
     }
 
     return company;
@@ -129,11 +133,15 @@ async function checkUserExists(username) {
  * 
  **/
 
-async function getUser(user) {
+async function getUser(user, checkOnly = false) {
     const isUser = await User.findById(user);
 
     if (isUser == null) {
-        throw ("The user does not exist")
+        if (checkOnly) {
+            return null;
+        } else {
+            throw ("The user does not exist")
+        }
     }
 
     return isUser;

@@ -8,7 +8,7 @@ const schema = new Schema({
     firstName: { type: String, required: [true, 'First name is required'] },
     lastName: { type: String, required: [true, 'Last name is required'] },
     tcno: { type: String, required: false },
-    tel: { type: String, required: false },
+    tel: { type: Number, required: false },
     company: { type: String, required: true, validate: { validator: function(v) { return v != null }, message: 'Company is required' } },
     office: { type: String, required: false },
     userRole: { type: Number, required: true, default: 0 },

@@ -3,7 +3,7 @@ const router = express.Router();
 const dailyService = require('./daily.service.js');
 
 // routes
-router.post('/add', createDailyTask);
+router.post('/create', createDailyTask);
 router.post('/update', updateTask);
 router.post('/delete', deleteTask);
 router.get('/get', getTasts);

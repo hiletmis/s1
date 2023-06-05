@@ -270,6 +270,54 @@ async function validateCompanyUpdate(company, userParam) {
         }
     }
 
+    if (userParam.taxNo != null) {
+        if (validateInput(userParam.taxNo, "regular") == true) {
+            company.taxNo = userParam.taxNo
+        }
+    }
+
+    if (userParam.taxOffice != null) {
+        if (validateInput(userParam.taxOffice, "regular") == true) {
+            company.taxOffice = userParam.taxOffice
+        }
+    }
+
+    if (userParam.city != null) {
+        if (validateInput(userParam.city, "regular") == true) {
+            company.city = userParam.city
+        }
+    }
+
+    if (userParam.town != null) {
+        if (validateInput(userParam.town, "regular") == true) {
+            company.town = userParam.town
+        }
+    }
+
+    if (userParam.country != null) {
+        if (validateInput(userParam.country, "regular") == true) {
+            company.country = userParam.country
+        }
+    }
+
+    if (userParam.postalCode != null) {
+        if (validateInput(userParam.postalCode, "regular") == true) {
+            company.postalCode = userParam.postalCode
+        }
+    }
+
+    if (userParam.mobile != null) {
+        if (validateInput(userParam.mobile, "regular") == true) {
+            company.mobile = userParam.mobile
+        }
+    }
+
+    if (userParam.fax != null) {
+        if (validateInput(userParam.fax, "regular") == true) {
+            company.fax = userParam.fax
+        }
+    }
+
     //update location
     if (userParam.location != null) {
         const location = await checkLocation(company._id, userParam.location._id);
@@ -348,6 +396,16 @@ async function validateCompany(companyParam) {
         throw ("E-mail address is invalid")
     }
 
+    if (companyParam.locations != null) {
+        //validate locations
+        let newLocations = []
+        for (let i = 0; i < companyParam.locations.length; i++) {
+            const location = validateLocation(companyParam.locations[i])
+            newLocations.push(location)
+        }
+        companyParam.locations = newLocations
+    }
+
     const username = companyParam.username
     const isUser = await Company.findOne({ username });
 
@@ -397,9 +455,9 @@ async function validateUserUpdate(isUser, userParam) {
     }
 
     // change title
-    if (userParam.title != null) {
-        if (validateInput(userParam.title, "regular") == true) {
-            isUser.title = userParam.title
+    if (userParam.position != null) {
+        if (validateInput(userParam.position, "regular") == true) {
+            isUser.position = userParam.position
         }
     }
 

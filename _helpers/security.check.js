@@ -187,7 +187,7 @@ function checkDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
     //distance in km
     var d = R * c;
 
-    if (d > 0.14) {
+    if (d > 0.5) {
         throw ("You are not at the company location")
     }
 

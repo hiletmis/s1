@@ -48,7 +48,6 @@ async function getCompany(user) {
     return await Company.find({}, { hash: 0, username: 0, __v: 0 });
 }
 
-//get company by id
 async function getCompanyById(companyParam, user) {
     await security.checkAuthorization(user, companyParam);
     return await Company.findById(companyParam, { hash: 0, username: 0, __v: 0 });

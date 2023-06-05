@@ -5,7 +5,6 @@ const db = require('_helpers/db');
 const LogEndpoint = db.LogEndpoint;
 
 function errorHandler(err, req, res, next) {
-    //console.log(req);
     logMe(req, "", "", req.originalUrl, req.method, "ERROR")
     if (typeof(err) === 'string') {
         // custom application error

@@ -9,6 +9,7 @@ function jwt() {
         path: [
             process.env.API_PREFIX + '/users/authenticate',
             process.env.API_PREFIX + '/company/authenticate',
+            process.env.API_PREFIX + '/company/register',
         ]
     });
 }

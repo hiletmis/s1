@@ -15,5 +15,6 @@ module.exports = {
     Scan: require('../scan/scan.model.js'),
     Task: require('../tasks/task.model.js'),
     Daily: require('../daily/daily.model.js'),
-    LogEndpoint: require('../logEndpoint/log.endpoint.model.js')
+    LogEndpoint: require('../logEndpoint/log.endpoint.model.js'),
+    Subscription: require('../subscription/subscription.model.js')
 };

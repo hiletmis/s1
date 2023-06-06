@@ -423,6 +423,9 @@ async function validateCompany(companyParam) {
 
     // save user
     await company.save();
+
+    //return company without hash
+    company.hash = null
     return company;
 }
 
@@ -731,7 +734,7 @@ function validateInput(input, mode) {
 
 function validateRegularInput(input) {
     //check name regex with turkish characters and space and numbers 
-    var nameRegex = /^[A-Za-zÇçĞğİıÖöŞşÜü0-9- /.'!]*$/;
+    var nameRegex = /^[A-Za-zÇçĞğİıÖöŞşÜü0-9- /:.!'^+%&/()=?-_;,'!]*$/;
     //validate input with regex
     return (nameRegex.test(input))
 }
@@ -767,7 +770,7 @@ function validateTcno(input) {
 
 function validateTel(input) {
     //tel regex
-    var telRegex = /^(\+90|0)?5\d{9}$/;
+    var telRegex = /^5\d{9}$/;
     //validate input with regex
     return (telRegex.test(input))
 }

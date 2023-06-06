@@ -39,7 +39,6 @@ async function authenticate({ username, password }) {
 }
 
 async function create(userParam, admin) {
-    await security.checkAdmin(admin);
     return await security.validateCompany(userParam);
 }
 

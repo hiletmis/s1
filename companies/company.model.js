@@ -22,6 +22,14 @@ const schema = new Schema({
         lat: { type: Number, required: [true, 'Latitude is required'] },
         long: { type: Number, required: [true, 'Longitude is required'] },
     }],
+    department: [{
+        _id: { type: String, required: true },
+        name: { type: String, required: [true, 'Department name is required'] },
+        description: { type: String, required: false },
+        location: { type: String, required: false },
+        status: { type: Number, required: true, default: 0 },
+        createdDate: { type: Date, default: Date.now }
+    }],
     status: { type: Number, required: true, default: 0 },
     createdDate: { type: Date, default: Date.now }
 });

@@ -354,12 +354,52 @@ async function validateCompanyUpdate(company, userParam) {
         company.locations[index] = location
     }
 
+    //department
+    if (userParam.department != null) {
+        const department = await checkDepartment(company._id, userParam.department._id);
+
+        if (userParam.department.name != null) {
+            if (validateInput(userParam.department.name, "regular") == true) {
+                department.name = userParam.department.name
+            }
+        }
+
+        if (userParam.department.description != null) {
+            if (validateInput(userParam.department.description, "regular") == true) {
+                department.description = userParam.department.description
+            }
+        }
+
+        const index = company.departments.findIndex(x => x._id == department._id)
+        company.departments[index] = department
+    }
+
     await company.save();
     //return company without hash
     company.hash = null
 
     return company
 
+}
+
+async function checkDepartment(company, department) {
+    const departments = await Company.findById(company, { "__v": 0, "hash": 0, "username": 0, "createdDate": 0, "_id": 0 });
+
+    if (departments == null) {
+        throw ("The company does not have any departments")
+    }
+
+    if (department == null) {
+        return departments
+    }
+
+    const departmentExists = departments.departments.find(x => x._id == department)
+
+    if (departmentExists == null) {
+        throw ("The department does not exist")
+    }
+
+    return departmentExists
 }
 
 async function validateCompany(companyParam) {
@@ -504,6 +544,13 @@ async function validateUserUpdate(isUser, userParam) {
     // change device
     if (userParam.device != null) {
         isUser.device = userParam.device
+    }
+
+    // change department
+    if (userParam.department != null) {
+        if (validateInput(userParam.department, "regular") == true) {
+            isUser.department = userParam.department
+        }
     }
 
     return isUser

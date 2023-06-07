@@ -13,6 +13,7 @@ const schema = new Schema({
     office: { type: String, required: false },
     userRole: { type: Number, required: true, default: 0 },
     position: { type: String, required: false },
+    department: { type: String, required: false },
     status: { type: Number, required: true, default: 0 },
     device: { type: String, required: true, default: "mobile" },
     createdDate: { type: Date, default: Date.now }

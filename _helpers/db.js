@@ -16,5 +16,7 @@ module.exports = {
     Task: require('../tasks/task.model.js'),
     Daily: require('../daily/daily.model.js'),
     LogEndpoint: require('../logEndpoint/log.endpoint.model.js'),
-    Subscription: require('../subscription/subscription.model.js')
+    Subscription: require('../subscription/subscription.model.js'),
+    Job: require('../jobs/jobs.model.js'),
+    Shift: require('../shifts/shifts.model.js')
 };

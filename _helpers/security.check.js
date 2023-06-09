@@ -25,6 +25,7 @@ module.exports = {
     validateTaskUpdate,
     checkDevice,
     checkLocation,
+    checkDepartment,
     checkDistanceFromLatLonInKm
 };
 /**
@@ -354,6 +355,21 @@ async function validateCompanyUpdate(company, userParam) {
         company.locations[index] = location
     }
 
+
+    //add new department
+    if (userParam.newDepartment != null) {
+
+        const newD = {
+            _id: uuidv4(),
+            name: userParam.newDepartment.name,
+            description: userParam.newDepartment.description,
+            location: userParam.newDepartment.location
+        }
+
+        company.department.push(newD)
+
+    }
+
     //department
     if (userParam.department != null) {
         const department = await checkDepartment(company._id, userParam.department._id);
@@ -393,7 +409,7 @@ async function checkDepartment(company, department) {
         return departments
     }
 
-    const departmentExists = departments.departments.find(x => x._id == department)
+    const departmentExists = departments.department.find(x => x._id == department)
 
     if (departmentExists == null) {
         throw ("The department does not exist")

@@ -60,6 +60,8 @@ app.use(process.env.API_PREFIX + '/task', require('./tasks/task.controller'));
 app.use(process.env.API_PREFIX + '/daily', require('./daily/daily.controller'));
 app.use(process.env.API_PREFIX + '/company', require('./companies/company.controller'));
 app.use(process.env.API_PREFIX + '/subscription', require('./subscription/subscription.controller'));
+app.use(process.env.API_PREFIX + '/jobs', require('./jobs/jobs.controller'));
+app.use(process.env.API_PREFIX + '/shifts', require('./shifts/shifts.controller'));
 
 // global error handler
 app.use(errorHandler);

@@ -18,6 +18,7 @@ module.exports = {
     getCompanyById,
     addLocation,
     removeLocation,
+    removeDepartment,
     getScans,
     getCompanyUsers,
     calculateWorkingHours,
@@ -69,6 +70,16 @@ async function removeLocation(locationParam, user) {
     await company.save();
 
     return company.locations;
+}
+
+async function removeDepartment(departmentParam, user) {
+    const company = await security.checkCompany(user.sub);
+    const department = await security.checkDepartment(user.sub, departmentParam.department);
+
+    company.department = company.department.filter(x => x._id != department._id);
+    await company.save();
+
+    return company.department
 }
 
 async function getCompanyUsers(user) {

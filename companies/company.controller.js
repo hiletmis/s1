@@ -6,6 +6,7 @@ const userService = require('./company.service.js');
 router.post('/register', register);
 router.post('/addlocation', addLocation);
 router.post('/removelocation', removeLocation);
+router.post('/removedepartment', removeDepartment);
 router.post('/update', update);
 router.post('/authenticate', authenticate);
 router.get('/get', getCompany);
@@ -42,6 +43,10 @@ function getCompanyById(req, res, next) {
 
 function removeLocation(req, res, next) {
     userService.removeLocation(req.body, req.user).then(function(users) { res.json(users) }).catch(function(err) { next(err) })
+}
+
+function removeDepartment(req, res, next) {
+    userService.removeDepartment(req.body, req.user).then(function(users) { res.json(users) }).catch(function(err) { next(err) })
 }
 
 function getScans(req, res, next) {

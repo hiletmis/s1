@@ -15,6 +15,7 @@ const schema = new Schema({
     position: { type: String, required: false },
     department: { type: String, required: false },
     status: { type: Number, required: true, default: 0 },
+    currentShift: { type: String, required: false },
     device: { type: String, required: true, default: "mobile" },
     createdDate: { type: Date, default: Date.now }
 });

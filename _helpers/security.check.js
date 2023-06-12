@@ -582,9 +582,26 @@ async function validateUserUpdate(isUser, userParam) {
     }
 
     // change location
-    if (userParam.location != null) {
-        if (validateInput(userParam.location, "regular") == true) {
-            isUser.location = userParam.location
+    if (userParam.office != null) {
+        if (validateInput(userParam.office, "regular") == true) {
+            //check if company has this location
+            const company = await Company.findOne({ _id: isUser.company })
+            if (company == null) {
+                throw ("The company does not exist")
+            }
+
+            let locationExists = false
+            for (let i = 0; i < company.locations.length; i++) {
+                if (company.locations[i]._id == userParam.office) {
+                    locationExists = true
+                }
+            }
+
+            if (locationExists == false) {
+                throw ("The location does not exist")
+            }
+
+            isUser.office = userParam.office
         }
     }
 

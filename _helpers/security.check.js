@@ -6,6 +6,7 @@ require('dotenv').config();
 
 const User = db.User;
 const Company = db.Company;
+const Job = db.Job;
 
 module.exports = {
     checkUser,
@@ -121,7 +122,7 @@ async function checkUserExists(username) {
     const isUser = await User.findOne({ username });
 
     if (isUser != null) {
-        throw ("This e-mail address is already in use")
+        throw ("This username is already in use")
     }
 }
 
@@ -196,7 +197,7 @@ function checkDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
     //distance in km
     var d = R * c;
 
-    if (d > 0.5) {
+    if (d > 1) {
         throw ("You are not at the company location")
     }
 
@@ -517,6 +518,8 @@ async function validateUserUpdate(isUser, userParam) {
     if (userParam.position != null) {
         if (validateInput(userParam.position, "regular") == true) {
             isUser.position = userParam.position
+        } else {
+            throw ("This position is invalid")
         }
     }
 
@@ -524,6 +527,8 @@ async function validateUserUpdate(isUser, userParam) {
     if (userParam.tcno != null) {
         if (validateInput(userParam.tcno, "tcno") == true) {
             isUser.tcno = userParam.tcno
+        } else {
+            throw ("This TC no is invalid")
         }
     }
 
@@ -531,22 +536,22 @@ async function validateUserUpdate(isUser, userParam) {
     if (userParam.tel != null) {
         if (validateInput(userParam.tel, "tel") == true) {
             isUser.tel = userParam.tel
+        } else {
+            throw ("This telephone number is invalid")
         }
     }
 
     // change mail
     if (userParam.username != null) {
-        if (isUser.username == userParam.username) {
-            throw ("This e-mail address is already in use")
-        } else {
-            const isUserExists = await User.findOne({ username: userParam.mail });
-            if (isUserExists != null) {
-                throw ("This e-mail address is already in use")
-            }
+        const isUserExists = await User.findOne({ username: userParam.username });
+        if (isUserExists != null && isUser._id != isUserExists._id) {
+            throw ("This username is already in use")
+        }
 
-            if (validateInput(userParam.mail, "email") == true) {
-                isUser.mail = userParam.mail
-            }
+        if (validateInput(userParam.username, "username") == true) {
+            isUser.username = userParam.username
+        } else {
+            throw ("This username is invalid")
         }
     }
 
@@ -569,6 +574,37 @@ async function validateUserUpdate(isUser, userParam) {
         }
     }
 
+    //change status 
+    if (userParam.status != null) {
+        if (validateNumber(userParam.status, [-1, 1]) == true) {
+            isUser.status = userParam.status
+        }
+    }
+
+    // change location
+    if (userParam.location != null) {
+        if (validateInput(userParam.location, "regular") == true) {
+            isUser.location = userParam.location
+        }
+    }
+
+    // change job   
+    if (userParam.job != null) {
+        if (validateInput(userParam.job, "regular") == true) {
+            //check if job exists
+            const job = await Job.findOne({ _id: userParam.job })
+            if (job == null) {
+                throw ("The job does not exist")
+            }
+            isUser.job = userParam.job
+        }
+    }
+
+    // save user
+    await isUser.save();
+
+    //return user without hash
+    isUser.hash = null
     return isUser
 }
 
@@ -697,12 +733,19 @@ function validateTask(taskParam) {
         throw ("Period is invalid")
     }
 
+    if (taskParam.type != null) {
+        if (validateNumber(taskParam.type, [0, 2]) == false) {
+            throw ("Type is invalid")
+        }
+    }
+
     const task = {
         _id: uuidv4(),
         title: taskParam.title,
         description: taskParam.description,
         location: taskParam.location,
-        period: taskParam.period
+        period: taskParam.period,
+        type: taskParam.type
     }
 
     return task
@@ -790,13 +833,39 @@ function validateInput(input, mode) {
             return validateTel(input)
         case "period":
             return validatePeriod(input)
+        case "username":
+            return validateUsername(input)
         default:
             return false
     }
 }
 
+function validateUsername(input) {
+    //check name regex without turkish characters
+    //remove last space
+    input = input.trim()
+
+    var nameRegex = /^[A-Za-z0-9]+(?:\s+[A-Za-z0-9]+)*$/;
+    //validate input with regex
+    return (nameRegex.test(input))
+}
+
+
+function validateNumber(input, range) {
+    if (isNaN(input)) {
+        return false
+    }
+
+    if (input < range[0] || input > range[1]) {
+        return false
+    }
+
+    return true
+}
+
 function validateRegularInput(input) {
-    //check name regex with turkish characters and space and numbers 
+    input = input.trim()
+        //check name regex with turkish characters and space and numbers 
     var nameRegex = /^[A-Za-zÇçĞğİıÖöŞşÜü0-9- /:.!'^+%&/()=?-_;,'!]*$/;
     //validate input with regex
     return (nameRegex.test(input))
@@ -804,6 +873,8 @@ function validateRegularInput(input) {
 
 function validateName(input) {
     //check name regex with turkish characters
+    //remove last space
+    input = input.trim()
 
     var nameRegex = /^[A-Za-zÇçĞğİıÖöŞşÜü]+(?:\s+[A-Za-zÇçĞğİıÖöŞşÜü]+)*$/;
     //validate input with regex
@@ -811,7 +882,9 @@ function validateName(input) {
 }
 
 function validateEmail(input) {
-    //email regex
+
+    input = input.trim()
+        //email regex
     var emailRegex = /\S+@\S+\.\S+/;
     //validate input with regex
     return (emailRegex.test(input))

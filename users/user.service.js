@@ -18,9 +18,14 @@ module.exports = {
 async function authenticate({ username, password, device }) {
     const user = await User.findOne({ username });
 
+    //check status
+    if (user.status == -1) {
+        throw ("User is not active")
+    }
+
     if (user && bcrypt.compareSync(password, user.hash)) {
         const { hash, ...userWithoutHash } = user.toObject();
-        const token = jwt.sign({ sub: user.id, role: user.userRole, company: user.company }, process.env.JWT_SECRET);
+        const token = jwt.sign({ sub: user.id, role: user.userRole, company: user.company }, process.env.JWT_SECRET, { expiresIn: '30d' });
         return {
             ...userWithoutHash,
             token

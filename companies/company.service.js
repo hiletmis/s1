@@ -20,16 +20,18 @@ module.exports = {
     removeLocation,
     removeDepartment,
     getScans,
+    getUserById,
     getCompanyUsers,
     calculateWorkingHours,
-    update
+    update,
+    updateUser,
 };
 
 async function authenticate({ username, password }) {
     const user = await Company.findOne({ username });
     if (user && bcrypt.compareSync(password, user.hash)) {
         const { hash, ...userWithoutHash } = user.toObject();
-        const token = jwt.sign({ sub: user.id, role: 1 }, process.env.JWT_SECRET);
+        const token = jwt.sign({ sub: user.id, role: 1 }, process.env.JWT_SECRET, { expiresIn: '30d' });
         return {
             ...userWithoutHash,
             token
@@ -51,6 +53,23 @@ async function getCompany(user) {
 async function getCompanyById(companyParam, user) {
     await security.checkAuthorization(user, companyParam);
     return await Company.findById(companyParam, { hash: 0, username: 0, __v: 0 });
+}
+
+async function getUserById(userParam, companyParam) {
+    const company = await security.checkCompany(companyParam.sub);
+    const user = await User.findById(userParam, { hash: 0, __v: 0 });
+
+    //check if user is in company
+    if (user.company != company._id) {
+        throw ("User is not in company")
+    }
+
+    //check status
+    if (user.status == -1) {
+        throw ("User is not active")
+    }
+
+    return user;
 }
 
 async function addLocation(locationParam, user) {
@@ -84,7 +103,7 @@ async function removeDepartment(departmentParam, user) {
 
 async function getCompanyUsers(user) {
     const company = await security.checkCompany(user.sub);
-    return await User.find({ company: company._id }, { hash: 0, username: 0, __v: 0, company: 0, userRole: 0, device: 0, createdDate: 0, id: 0 });
+    return await User.find({ company: company._id, status: 0 }, { hash: 0, username: 0, __v: 0, company: 0, userRole: 0, device: 0, createdDate: 0, id: 0 });
 }
 
 async function calculateWorkingHours(body, user) {
@@ -103,11 +122,38 @@ async function calculateWorkingHours(body, user) {
 async function getScans(body, user) {
     const company = await security.checkCompany(user.sub);
     let query = queryCheck.queryBuilder(body, { company: company._id })
-    return await Scans.find(query, { __v: 0, company: 0, lat: 0, long: 0, _id: 0, device: 0, createdDate: 0, id: 0 });
+
+    //get users
+    const users = await User.find({ company: company._id }, { hash: 0, username: 0, __v: 0, company: 0, userRole: 0, device: 0, createdDate: 0, id: 0 });
+
+    //get locations
+    const locations = await Company.findById(company._id, { hash: 0, username: 0, __v: 0, _id: 0, department: 0, locations: 0, id: 0 });
+
+    //get scans
+    const scans = await Scans.find(query, { __v: 0, company: 0, lat: 0, long: 0, _id: 0, device: 0, createdDate: 0, id: 0 });
+
+    return { users, locations, scans };
 
 }
 
 async function update(userParam, user) {
     const company = await security.checkCompany(user.sub);
     return await security.validateCompanyUpdate(company, userParam);
+}
+
+async function updateUser(userParam, user) {
+    const company = await security.checkCompany(user.sub);
+    const userToUpdate = await User.findById(userParam.user);
+
+    //if null
+    if (!userToUpdate) {
+        throw ("User not found")
+    }
+
+    //check if user is in company
+    if (userToUpdate.company != company._id) {
+        throw ("User is not in company")
+    }
+
+    return await security.validateUserUpdate(userToUpdate, userParam);
 }

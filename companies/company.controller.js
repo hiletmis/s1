@@ -8,9 +8,11 @@ router.post('/addlocation', addLocation);
 router.post('/removelocation', removeLocation);
 router.post('/removedepartment', removeDepartment);
 router.post('/update', update);
+router.post('/updateuser', updateUser);
 router.post('/authenticate', authenticate);
 router.get('/get', getCompany);
 router.get('/getbyid/:id', getCompanyById);
+router.get('/getuser/:id', getUserById);
 router.post('/getscans', getScans);
 router.get('/getusers', getCompanyUsers);
 router.post('/agg', calculateWorkingHours);
@@ -29,6 +31,10 @@ function update(req, res, next) {
     userService.update(req.body, req.user).then(function(users) { res.json(users) }).catch(function(err) { next(err) })
 }
 
+function updateUser(req, res, next) {
+    userService.updateUser(req.body, req.user).then(function(users) { res.json(users) }).catch(function(err) { next(err) })
+}
+
 function authenticate(req, res, next) {
     userService.authenticate(req.body).then(function(users) { res.json(users) }).catch(function(err) { next(err) })
 }
@@ -39,6 +45,10 @@ function getCompany(req, res, next) {
 
 function getCompanyById(req, res, next) {
     userService.getCompanyById(req.params.id, req.user).then(function(users) { res.json(users) }).catch(function(err) { next(err) })
+}
+
+function getUserById(req, res, next) {
+    userService.getUserById(req.params.id, req.user).then(function(users) { res.json(users) }).catch(function(err) { next(err) })
 }
 
 function removeLocation(req, res, next) {

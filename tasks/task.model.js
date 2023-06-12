@@ -9,6 +9,7 @@ const schema = new Schema({
     location: { type: String, required: [true, "Location is required"] },
     period: { type: String, required: [true, "Period is required"] },
     duration: { type: Number, required: false, default: 30 },
+    type: { type: Number, required: true, default: 0 }, // 0: Routine; 1: Shift based; 2: unscheduled
     score: { type: Number, required: false, default: 0 },
     createdDate: { type: Date, default: Date.now }
 });

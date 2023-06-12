@@ -581,6 +581,13 @@ async function validateUserUpdate(isUser, userParam) {
         }
     }
 
+    //change photo
+    if (userParam.photo != null) {
+        //store photo
+        const photo = await storePhoto(userParam.photo)
+        isUser.photo = photo
+    }
+
     // change location
     if (userParam.office != null) {
         if (validateInput(userParam.office, "regular") == true) {
@@ -623,6 +630,11 @@ async function validateUserUpdate(isUser, userParam) {
     //return user without hash
     isUser.hash = null
     return isUser
+}
+
+async function storePhoto(photo) {
+    //convert photo data to buffer
+    return Buffer.from(photo, 'base64');
 }
 
 async function validateUserCreate(userParam) {

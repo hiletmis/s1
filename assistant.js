@@ -49,7 +49,7 @@ let logger = (req, res, next) => {
 
 app.use(logger);
 
-app.use(express.json({ limit: "50MB" }));
+app.use(express.json({ limit: "5MB" }));
 app.use(cors());
 
 app.use(jwt());

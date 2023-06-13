@@ -18,6 +18,7 @@ const schema = new Schema({
     department: { type: String, required: false },
     status: { type: Number, required: true, default: 0 },
     photo: { type: Buffer, required: false },
+    photoHash: { type: String, required: false },
     currentShift: { type: String, required: false },
     device: { type: String, required: true, default: "mobile" },
     createdDate: { type: Date, default: Date.now }

@@ -1,6 +1,7 @@
 const db = require('_helpers/db');
 const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid')
+const crypto = require('crypto');
 
 require('dotenv').config();
 
@@ -584,8 +585,11 @@ async function validateUserUpdate(isUser, userParam) {
     //change photo
     if (userParam.photo != null) {
         //store photo
-        const photo = await storePhoto(userParam.photo)
+        const photo = new Buffer.from(userParam.photo.split(",")[1], "base64");
         isUser.photo = photo
+            //sha256 photo
+        const photoHash = crypto.createHash("sha256").update(photo).digest("hex");
+        isUser.photoHash = photoHash
     }
 
     // change location
@@ -630,16 +634,7 @@ async function validateUserUpdate(isUser, userParam) {
     //return user without hash
     isUser.hash = null
 
-    //add data:image/jpeg;base64 to photo
-    if (isUser.photo != null) {}
-
     return isUser.toObject();
-}
-
-async function storePhoto(photo) {
-    //convert photo data to buffer
-    var bindata = new Buffer.from(photo.split(",")[1], "base64");
-    return bindata;
 }
 
 async function validateUserCreate(userParam) {

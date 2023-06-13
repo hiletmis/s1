@@ -16,7 +16,7 @@ module.exports = {
 };
 
 async function authenticate({ username, password, device }) {
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ username }, {});
 
     //check status
     if (user.status == -1) {
@@ -38,11 +38,7 @@ async function authenticate({ username, password, device }) {
 async function update(userParam, payload) {
     let isUser = await security.getUser(payload.sub);
     isUser = await security.validateUserUpdate(isUser, userParam);
-
-    await isUser.save();
-
-    const { hash, ...userWithoutHash } = isUser.toObject();
-    return userWithoutHash
+    return isUser
 }
 
 async function create(userParam, company) {

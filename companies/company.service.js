@@ -69,7 +69,7 @@ async function getUserById(userParam, companyParam) {
         throw ("User is not active")
     }
 
-    return user;
+    return user.toObject();
 }
 
 async function addLocation(locationParam, user) {
@@ -103,7 +103,7 @@ async function removeDepartment(departmentParam, user) {
 
 async function getCompanyUsers(user) {
     const company = await security.checkCompany(user.sub);
-    return await User.find({ company: company._id, status: 0 }, { hash: 0, username: 0, __v: 0, company: 0, userRole: 0, device: 0, createdDate: 0, id: 0 });
+    return await User.find({ company: company._id, status: 0 }, { hash: 0, username: 0, __v: 0, company: 0, userRole: 0, device: 0, createdDate: 0, id: 0, photo: 0 });
 }
 
 async function calculateWorkingHours(body, user) {

@@ -629,12 +629,17 @@ async function validateUserUpdate(isUser, userParam) {
 
     //return user without hash
     isUser.hash = null
-    return isUser
+
+    //add data:image/jpeg;base64 to photo
+    if (isUser.photo != null) {}
+
+    return isUser.toObject();
 }
 
 async function storePhoto(photo) {
     //convert photo data to buffer
-    return Buffer.from(photo, 'base64');
+    var bindata = new Buffer.from(photo.split(",")[1], "base64");
+    return bindata;
 }
 
 async function validateUserCreate(userParam) {

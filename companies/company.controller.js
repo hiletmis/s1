@@ -13,6 +13,7 @@ router.post('/authenticate', authenticate);
 router.get('/get', getCompany);
 router.get('/getbyid/:id', getCompanyById);
 router.get('/getuser/:id', getUserById);
+router.get('/photo/:id', getUserPhotoById);
 router.post('/getscans', getScans);
 router.get('/getusers', getCompanyUsers);
 router.post('/agg', calculateWorkingHours);
@@ -49,6 +50,10 @@ function getCompanyById(req, res, next) {
 
 function getUserById(req, res, next) {
     userService.getUserById(req.params.id, req.user).then(function(users) { res.json(users) }).catch(function(err) { next(err) })
+}
+
+function getUserPhotoById(req, res, next) {
+    userService.getUserPhotoById(req.params.id, req.user).then(function(users) { res.json(users) }).catch(function(err) { next(err) })
 }
 
 function removeLocation(req, res, next) {

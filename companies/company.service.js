@@ -21,6 +21,7 @@ module.exports = {
     removeDepartment,
     getScans,
     getUserById,
+    getUserPhotoById,
     getCompanyUsers,
     calculateWorkingHours,
     update,
@@ -71,6 +72,24 @@ async function getUserById(userParam, companyParam) {
 
     return user.toObject();
 }
+
+async function getUserPhotoById(userParam, companyParam) {
+    const company = await security.checkCompany(companyParam.sub);
+    const user = await User.findById(userParam, { hash: 0, __v: 0 });
+
+    //check if user is in company
+    if (user.company != company._id) {
+        throw ("User is not in company")
+    }
+
+    //check status
+    if (user.status == -1) {
+        throw ("User is not active")
+    }
+
+    return user.photo;
+}
+
 
 async function addLocation(locationParam, user) {
     const company = await security.checkCompany(user.sub);
